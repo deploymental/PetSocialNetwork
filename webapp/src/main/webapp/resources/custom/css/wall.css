@@ -1,0 +1,12 @@
+\.wall {
+    padding-top: 20px;
+}
+
+.block {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.panel {
+    margin-bottom: 3px;
+}

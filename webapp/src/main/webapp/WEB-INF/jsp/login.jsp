@@ -22,7 +22,7 @@
 <body>
 <div class="container">
     <div class="panel-body">
-        <form method="post" action="EntryPoint">
+        <form method="post" action="/login">
             <br/><br/><br/><br/><br/><br/><br/><br/>
             <center>
                 <table>
@@ -33,27 +33,32 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td><span class="glyphicon glyphicon-envelope"></span> Email</td>
-                        <td><input type="text" name="email" value=""/></td>
-                    </tr>
-                    <tr>
-                        <td><span class="glyphicon glyphicon-log-in"></span> Password</td>
-                        <td><input type="password" name="pass" value=""/></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <button class="btn btn-primary" value="Login" onclick="Login">Login</button>
-                        </td>
-                        <%--<td><input type="submit" value="Login"/></td>--%>
-                        <td><input type="checkbox" id="remember" <%--name="subscribe" value="newsletter"--%>>
-                            <label for="remember">Remember me</label></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <a href="/RegistrationController">Sign Up</a>
-                        </td>
-                    </tr>
+                    <center>
+                        <div>
+                            <tr>
+                                <td><input type="text" name="email" value="" placeholder="Email"/></td>
+                            </tr>
+                            <tr>
+                                <td><input type="password" name="password" value="" placeholder="Password"/></td>
+                            </tr>
+                        </div>
+
+
+                        <tr>
+                            <td>
+                                <button class="btn btn-primary btn-block" type="submit" value="Login" onclick="Login">
+                                    Login
+                                </button>
+                                <input id="remember" type="checkbox" name="remember" value="newsletter">
+                                <label for="remember">Remember</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="/registration">Sign Up</a>
+                            </td>
+                        </tr>
+                    </center>
                     </tbody>
                 </table>
             </center>

@@ -1,50 +1,50 @@
 package com.getjavajob;
 
 import com.getjavajob.common.Phone;
+import com.getjavajob.exceptions.DaoException;
+import exception.ServiceException;
+import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.getjavajob.ConnectionPool.returnConnection;
-
+@Transactional
+@Service(value = "phoneService")
 public class PhoneService {
     private PhoneDAO phoneDAO;
 
+    @Autowired
     public PhoneService(PhoneDAO phoneDAO) {
         this.phoneDAO = phoneDAO;
     }
 
-    public int create(Phone phone) throws SQLException {
-        int id = phoneDAO.create(phone);
-        returnConnection();
-        return id;
+    public void create(@NonNull Phone phone) throws SQLException {
+        try {
+            phoneDAO.create(phone);
+        } catch (DaoException e) {
+            throw new ServiceException();
+        }
     }
 
-    public void edit(Phone phone) throws SQLException {
-        phoneDAO.update(phone);
-        returnConnection();
+    public void deleteAll(int id) throws SQLException {
+        try {
+            phoneDAO.deleteAllFromAccount(id);
+        } catch (DaoException e) {
+            throw new ServiceException();
+        }
     }
 
-    public void remove(Phone phone) throws SQLException {
-        phoneDAO.delete(phone.getId());
-        returnConnection();
-    }
-
-    public List<Phone> getAll() throws SQLException {
-        List<Phone> list = phoneDAO.getAll();
-        returnConnection();
-        return list;
-    }
-
+    @Transactional(propagation = Propagation.SUPPORTS)
     public List<Phone> getAll(int id) throws SQLException {
-        List<Phone> list = phoneDAO.getAll(id);
-        returnConnection();
-        return list;
-    }
-
-    public Phone read(int id) throws SQLException {
-        Phone phone = phoneDAO.read(id);
-        returnConnection();
-        return phone;
+        try {
+            List<Phone> list = phoneDAO.getAll(id);
+            return list;
+        } catch (DaoException e) {
+            throw new ServiceException();
+        }
     }
 }

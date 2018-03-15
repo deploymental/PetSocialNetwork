@@ -1,50 +1,102 @@
 package com.getjavajob;
 
 import com.getjavajob.common.Account;
+import com.getjavajob.exceptions.DaoException;
+import exception.ServiceException;
+import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.List;
 
-import static com.getjavajob.ConnectionPool.returnConnection;
-
+@Transactional
+@Service(value = "accountService")
 public class AccountService {
     private AccountDAO accountDAO;
 
+    @Autowired
     public AccountService(AccountDAO accountDAO) {
         this.accountDAO = accountDAO;
     }
 
-    public int createAccount(Account account) throws SQLException {
-        int id = accountDAO.create(account);
-        returnConnection();
-        return id;
+    public int createAccount(@NonNull Account account) {
+        try {
+            return accountDAO.create(account);
+        } catch (DaoException e) {
+            throw new ServiceException();
+        }
     }
 
-    public void editAccount(Account account) throws SQLException {
-        accountDAO.update(account);
-        returnConnection();
+    public void editAccount(@NonNull Account account) {
+        try {
+            accountDAO.update(account);
+        } catch (DaoException e) {
+            throw new ServiceException();
+        }
     }
 
-    public void removeAccount(Account account) throws SQLException {
-        accountDAO.delete(account.getId());
-        returnConnection();
+    public int updateAccount(@NonNull Account account) {
+        try {
+            accountDAO.update(account);
+            return account.getId();
+        } catch (DaoException e) {
+            throw new ServiceException();
+        }
+    } // TODO: 2/20/2018 ?????
+
+    public void removeAccount(@NonNull Account account) {
+        try {
+            accountDAO.delete(account.getId());
+        } catch (DaoException e) {
+            throw new ServiceException();
+        }
     }
 
-    public List<Account> getAllAccounts() throws SQLException {
-        List<Account> list = accountDAO.getAll();
-        returnConnection();
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public List<Account> getAllAccounts() {
+        try {
+            return accountDAO.getAll();
+        } catch (DaoException e) {
+            throw new ServiceException();
+        }
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public Account getAccount(int id) {
+        try {
+            return accountDAO.read(id);
+        } catch (DaoException e) {
+            throw new ServiceException();
+        }
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public Account getAccount(@NonNull String email) {
+        try {
+            return accountDAO.read(email);
+        } catch (DaoException e) {
+            throw new ServiceException();
+        }
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public byte[] getAvatar(int id) {
+        try {
+            return accountDAO.read(id).getImage();
+        } catch (DaoException e) {
+            throw new ServiceException();
+        }
+    }
+
+    /*public List<Phone> deleteAll() throws SQLException {
+        List<Phone> list = phoneDAO.getAll();
         return list;
     }
 
-    public Account getAccount(int id) throws SQLException {
-        Account ac = accountDAO.read(id);
-        returnConnection();
-        return ac;
-    }
-
-    public Account getAccount(String email) throws SQLException {
-        Account ac = accountDAO.read(email);
-        returnConnection();
-        return ac;
-    }
+    public List<Phone> getAll(int id) throws SQLException {
+        List<Phone> list = phoneDAO.getAll(id);
+        return list;
+    }*/
 }

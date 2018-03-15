@@ -1,33 +1,32 @@
 package com.getjavajob.common;
 
-import com.getjavajob.common.enums.AccountsRelationStatus;
+import com.getjavajob.common.enums.AccountRelationStatus;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+import javax.persistence.*;
+
+
+@Data
+@Entity
+@Table(name = "accountsrelations", uniqueConstraints = {@UniqueConstraint(columnNames = {"sender_id", "recipient_id"})})
+@RequiredArgsConstructor
+@NoArgsConstructor
 public class Friend {
-    Account iniciator;
-    Account account;
-    AccountsRelationStatus ars;
-
-    public Account getIniciator() {
-        return iniciator;
-    }
-
-    public void setIniciator(Account iniciator) {
-        this.iniciator = iniciator;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
-
-    public AccountsRelationStatus getArs() {
-        return ars;
-    }
-
-    public void setArs(AccountsRelationStatus ars) {
-        this.ars = ars;
-    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    @NonNull
+    @ManyToOne
+    @JoinColumn(name = "sender_id", referencedColumnName = "id", nullable = false)
+    private Account sender;
+    @NonNull
+    @ManyToOne
+    @JoinColumn(name = "recipient_id", referencedColumnName = "id", nullable = false)
+    private Account recipient;
+    @NonNull
+    @Enumerated(EnumType.STRING)
+    private AccountRelationStatus relation;
 }

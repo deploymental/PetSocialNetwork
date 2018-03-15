@@ -1,115 +1,81 @@
 package com.getjavajob;
 
+import com.getjavajob.common.Account;
 import com.getjavajob.common.Phone;
+import com.getjavajob.exceptions.DaoException;
+import org.springframework.stereotype.Repository;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.*;
-import java.util.ArrayList;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
-import java.util.Properties;
 
+@Repository(value = "phoneDao")
 public class PhoneDAO implements CrudDAO<Phone> {
-    private static Properties prop;
+    @PersistenceContext
+    EntityManager entityManager;
 
-    static {
-        prop = new Properties();
-        try {
-            ClassLoader loader = PhoneDAO.class.getClassLoader();
-            InputStream resourceStream = loader.getResourceAsStream("phoneSql.properties");
-            prop.load(resourceStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    @Override
+    public int create(Phone phone) throws DaoException {
+        return entityManager.merge(phone).getId();
     }
 
     @Override
-    public int create(Phone ph) throws SQLException {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        int id;
-        try (PreparedStatement ps = connection.prepareStatement(prop.getProperty("account.createPhone"), Statement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, ph.getAccId());
-            ps.setLong(2, ph.getNumber());
-            ps.executeUpdate();
-            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    id = generatedKeys.getInt(1);
-                } else {
-                    throw new SQLException("Creating phone failed, no ID obtained.");
-                }
-            }
-        }
-        return id;
+    public Phone read(int id) throws DaoException {
+        return getPhone("id", id);
+    }
+
+    public Phone read(Account ac) throws DaoException {
+        return getPhone("id", ac.getId());
+    }
+
+    public Phone getPhone(String field, Object o) throws DaoException {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Phone> criteriaQuery = builder.createQuery(Phone.class);
+        Root<Phone> root = criteriaQuery.from(Phone.class);
+        criteriaQuery.select(root).where(builder.equal(root.get(field), o));
+        return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
 
     @Override
-    public Phone read(int id) throws SQLException {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        try (PreparedStatement ps = connection.prepareStatement(prop.getProperty("phone.getPhoneById"))) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return createPhoneFromResult(rs);
-                }
-            }
-        }
-        return null;
+    public void update(Phone phone) throws DaoException {
+        entityManager.merge(phone);
     }
 
     @Override
-    public void update(Phone ph) throws SQLException {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        try (PreparedStatement ps = connection.prepareStatement(prop.getProperty("phone.update"))) {
-            ps.setInt(1, ph.getAccId());
-            ps.setLong(2, ph.getNumber());
-            ps.setInt(3, ph.getId());
-            ps.executeUpdate();
-        }
+    public void delete(int id) throws DaoException {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaDelete<Phone> query = builder.createCriteriaDelete(Phone.class);
+        Root<Phone> root = query.from(Phone.class);
+        query.where(builder.lessThanOrEqualTo(root.get("id"), id));
+        entityManager.createQuery(query).executeUpdate();
+    }
+
+    public void deleteAllFromAccount(int accountId) throws DaoException {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaDelete<Account> query = builder.createCriteriaDelete(Account.class);
+        Root<Account> root = query.from(Account.class);
+        query.where(builder.equal(root.get("account"), accountId));
+        entityManager.createQuery(query).executeUpdate();
     }
 
     @Override
-    public void delete(int id) throws SQLException {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        try (PreparedStatement ps = connection.prepareStatement(prop.getProperty("account.deletePhone"))) {
-            ps.setInt(1, id);
-            ps.executeUpdate();
-        }
+    public List<Phone> getAll() throws DaoException {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Phone> query = builder.createQuery(Phone.class);
+        Root<Phone> root = query.from(Phone.class);
+        query.select(root);
+        return entityManager.createQuery(query).getResultList();
     }
 
-    @Override
-    public List<Phone> getAll() throws SQLException {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        try (ResultSet resultSet = connection.createStatement()
-                .executeQuery(prop.getProperty("account.getAllPhones"))) {
-            List<Phone> accounts = new ArrayList();
-            while (resultSet.next()) {
-                accounts.add(createPhoneFromResult(resultSet));
-            }
-            return accounts;
-        }
-    }
-
-
-    public List<Phone> getAll(int id) throws SQLException {
-
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        try (PreparedStatement ps = connection.prepareStatement(prop.getProperty("account.getPhones"))) {
-            ps.setInt(1, id);
-            List<Phone> phones = new ArrayList();
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    phones.add(createPhoneFromResult(rs));
-                }
-            }
-            return phones;
-        }
-    }
-
-    private Phone createPhoneFromResult(ResultSet rs) throws SQLException {
-        Phone ph = new Phone();
-        ph.setId(rs.getInt("id"));
-        ph.setAccId(rs.getInt("account_id"));
-        ph.setNumber(rs.getLong("number"));
-        return ph;
+    public List<Phone> getAll(int accountId) throws DaoException {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Phone> query = builder.createQuery(Phone.class);
+        Root<Phone> root = query.from(Phone.class);
+        query.select(root).where(builder.equal(root.get("account"), accountId));
+        return entityManager.createQuery(query).getResultList();
     }
 }

@@ -1,3 +1,4 @@
+/*
 package com.getjavajob;
 
 import com.getjavajob.common.Group;
@@ -75,4 +76,4 @@ public class GroupsDAOTest {
         msd.create(forTests);
         assertEquals("", msd.getAll().get(0), forTests);
     }
-}
+}*/

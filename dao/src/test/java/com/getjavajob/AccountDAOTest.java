@@ -1,3 +1,6 @@
+/*@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:DAO-contest.xml"})*/
+/*
 package com.getjavajob;
 
 import com.getjavajob.common.Account;
@@ -96,7 +99,8 @@ public class AccountDAOTest {
         assertEquals("", msd.getAll().get(0), forTests);
     }
     //public static void main(String[] args) throws SQLException {
-        /*AccountDAO msd = new AccountDAO("TestProperties");
+        */
+/*AccountDAO msd = new AccountDAO("TestProperties");
         Account ac = new Account();
         ac.setId(1);
         ac.setName("Vasya");
@@ -118,6 +122,8 @@ public class AccountDAOTest {
         msd.update(ac);
         System.out.println(msd.read(1));
         msd.delete(1);
-        System.out.println(msd.getAll().size());*/
+        System.out.println(msd.getAll().size());*//*
+
 }
 
+*/

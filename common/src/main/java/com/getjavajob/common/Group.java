@@ -1,63 +1,29 @@
 package com.getjavajob.common;
 
-import java.sql.Blob;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
+import javax.persistence.*;
+
+@Data
+@Entity
+@Table(name = "groups")
+@RequiredArgsConstructor
+@NoArgsConstructor
 public class Group {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @NonNull
+    @ManyToOne
+    @JoinColumn(name = "creator_id", referencedColumnName = "id", nullable = false)
+    private Account creator;
+    @NonNull
     private String name;
+    @NonNull
     private String description;
-    private Blob image;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Group)) return false;
-
-        Group group = (Group) o;
-
-        if (id != group.id) return false;
-        if (!name.equals(group.name)) return false;
-        return description != null ? description.equals(group.description) : group.description == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + name.hashCode();
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Group{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                '}';
-    }
+    private byte[] image;
 }

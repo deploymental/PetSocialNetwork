@@ -72,12 +72,12 @@
                     <td>Skype</td>
                     <td><input type="text" name="skype" value=""/></td>
                 </tr>
-                <%--<tr>
+                <tr>
                     <td>Phone</td>
                     <td><input type='tel' name="phone" pattern='[\+]\d{2}[\(]\d{2}[\)]\d{4}[\-]\d{4}'
                                title='Phone Number (Format: +99(99)9999-9999)'></td>
 
-                </tr>--%>
+                </tr>
                 <tr>
                     <td>Additional information</td>
                     <td><textarea name="additionalInfo" cols="19" rows="5"></textarea></td>

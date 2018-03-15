@@ -1,4 +1,9 @@
+<%@ page import="com.getjavajob.common.Account" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<c:set var="accountSession" scope="session"
+       value="${accountSession}"/>
+
 
 <head>
     <title>EvilNetwork</title>
@@ -24,7 +29,7 @@
 <nav class="navbar navbar-inverse ">
     <div class="container">
         <div class="navbar-header">
-            <a class="navbar-brand" href="/EntryPoint">EvilNetwork</a>
+            <a class="navbar-brand" href="/login">EvilNetwork</a>
         </div>
 
         <div id="navbar">
@@ -36,30 +41,34 @@
                                 <div class="input-group-btn">
                                     <button type="button" class="btn btn-default">Go</button>
                                 </div>
-                                <input id="search" type="text" class="form-control" placeholder="Search for...">
+                                <input id="search" name="search" type="text" class="form-control"
+                                       placeholder="Search for...">
                             </div>
                         </form>
                     </div>
                 </li>
             </ul>
             <div class="navbar-form navbar-right">
-                <c:if test="${not sessionScope.containsKey('login')}">
-                    <button class="btn btn-success" onclick="location.href='${urlLogin}'">Login</button>
+                <c:if test="${accountSession == null}">
+                    <button class="btn btn-success" onclick="location.href='/login'">Login</button>
                 </c:if>
-                <c:if test="${sessionScope.containsKey('login')}">
-                    <a href="#"><%= session.getAttribute("login")%>
+                <c:if test="${accountSession != null}">
+                    <a href="#"><%= ((Account) session.getAttribute("accountSession")).getEmail()%>
                     </a>
-                    <button class="btn btn-danger" onclick="location.href='${urlLogout}'">Logout</button>
+                    <button class="btn btn-danger" onclick="location.href='/logout'">Logout</button>
                 </c:if>
             </div>
             <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="/header?value=groups">Groups</a></li>
+                <li class="active"><a href="/account/groups">Groups</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="/header?value=friends">Friends</a></li>
+                <li class="active"><a href="/account/friendsList">Friends</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="/header?value=messages">Messages</a></li>
+                <li class="active"><a href="https://web.telegram.org/">Messages</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="/chat">Evil Chat Room</a></li>
             </ul>
         </div>
     </div>
