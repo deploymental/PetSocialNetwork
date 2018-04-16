@@ -20,11 +20,9 @@ public class SearchController {
     @Autowired
     AccountDAO accountDAO;
 
-
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public ModelAndView search(@RequestParam("search") String search) {
         ModelAndView mav = new ModelAndView("/searchResult");
-
         try {
             return mav.addObject("accounts", accountDAO.getAll());
         } catch (DaoException e) {
@@ -40,6 +38,5 @@ public class SearchController {
         } catch (DaoException e) {
             throw new ServiceException();
         }
-    } //later
-
+    }
 }

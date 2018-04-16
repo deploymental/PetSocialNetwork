@@ -2,11 +2,14 @@ package com.getjavajob.ui;
 
 import com.getjavajob.AccountService;
 import com.getjavajob.common.Account;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
@@ -16,17 +19,13 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 public class LoginController {
-
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
     @Autowired
     AccountService accountService;
 
     @RequestMapping(value = {"/", "/login"}, method = RequestMethod.GET)
     public String getWelcomePage(HttpSession session) {
         Account ac = (Account) session.getAttribute("accountSession");
-        /*if(ac == null){
-            ac = new Account();
-            session.setAttribute("accountSession", ac);
-        }*/
         return ac == null ? "login" : "redirect:/account/" + ac.getId();
     }
 
@@ -36,11 +35,8 @@ public class LoginController {
                               @RequestParam("password") String pass,
                               @RequestParam(value = "remember", required = false) String remember,
                               HttpServletRequest req, HttpServletResponse resp) {
-        //logger
-
+        logger.info("login " + email);
         Account account = accountService.getAccount(email);
-        //String sha = getSHA256(pass);
-
         if (account != null && account.getPassword().equals(pass)) {
             if (remember != null) {
                 Cookie mailCookie = new Cookie("emailCookie", email);
@@ -48,14 +44,11 @@ public class LoginController {
                 resp.addCookie(mailCookie);
                 resp.addCookie(passCookie);
             }
-            req.getSession().setAttribute("accountSession", account); // TODO: 1/24/2018 ?????
-
-            //logger
-
+            req.getSession().setAttribute("accountSession", account);
+            logger.info("succes log in " + email);
             return new ModelAndView("redirect:/account/" + account.getId());
         } else {
-            //logger
-
+            logger.warn("wrong login or password " + email);
             return new ModelAndView("redirect:/login");
         }
     }
@@ -70,9 +63,7 @@ public class LoginController {
         resp.addCookie(mailCookie);
         resp.addCookie(passCookie);
         session.invalidate();
-
-        //logger
-
+        logger.info("log out");
         return "redirect:/login";
     }
 }

@@ -5,6 +5,8 @@ import com.getjavajob.PhoneService;
 import com.getjavajob.common.Account;
 import com.getjavajob.common.Phone;
 import com.getjavajob.common.enums.Sex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +26,7 @@ import static com.getjavajob.utils.GlueTogether.glueAccountsTogether;
 @MultipartConfig
 @SessionAttributes("accountSession")
 public class RegistrationController {
-
+    private static final Logger logger = LoggerFactory.getLogger(RegistrationController.class);
     @Autowired
     AccountService accountService;
     @Autowired
@@ -33,8 +35,6 @@ public class RegistrationController {
 
     @RequestMapping(value = {"/registration", "/update"}, method = RequestMethod.GET)
     public ModelAndView registration() {
-        //logger
-
         return new ModelAndView("accountEditForm");
     }
 
@@ -42,25 +42,20 @@ public class RegistrationController {
     public ModelAndView doRegistrationOrModification(@ModelAttribute("account") Account account,
                                                      @RequestParam(value = "sex", required = false) String sex,
                                                      HttpServletRequest request, HttpSession session) throws ServletException, IOException, SQLException, IllegalAccessException {
-
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         account.setImage(multipartRequest.getFile("imag").getBytes());
-        String[] phone = request.getParameterValues("addmore[]"); //todo simplier
+        String[] phone = request.getParameterValues("addmore[]");
         int id = 0;
         Account accountSession = (Account) session.getAttribute("accountSession");
-        if (accountSession == null /*&& accountSession.getId() == 0*/) {
+        if (accountSession == null) {
             account.setSex(Sex.valueOf(sex)); //do with spring
             id = accountService.createAccount(account);
             session.setAttribute("accountSession", account);
         } else if (accountSession != null) {
             id = accountSession.getId();
-            //put sha password
             glueAccountsTogether(accountSession, account);
-            //todo update image
             accountService.updateAccount(accountSession);
-
         }
-        //phoneService.deleteAll(id);
         for (String s : phone) {
             if (s != null && !s.isEmpty()) {
                 Phone ph = new Phone();
@@ -69,18 +64,14 @@ public class RegistrationController {
                 phoneService.create(ph);
             }
         }
-
-        //logger
-
+        logger.info("succesful registration or modification");
         return new ModelAndView("redirect:/account/" + id);
     }
 
     @RequestMapping(value = {"/remove/{id}"}, method = RequestMethod.GET)
     public ModelAndView remove(@PathVariable int id) {
         accountService.removeAccount(accountService.getAccount(id));
-        //logger
-
+        logger.info("succesful remove accountId " + id);
         return new ModelAndView("login");
     }
-
 }

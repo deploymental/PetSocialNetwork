@@ -3,6 +3,11 @@
   <component name="issues">
     <option name="index">
       <map>
+        <entry key="/Dummy.txt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="/a.dummy">
           <value>
             <set />
@@ -18,12 +23,47 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../Guys reps/Nemchinovrp-social-network-7b28f6f8b546/common/src/main/java/com/getjavajob/training/web1610/common/Group.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../Guys reps/Nemchinovrp-social-network-7b28f6f8b546/dao/src/main/java/com/getjavajob/training/web1610/dao/AccountDao.java">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../Guys reps/Nemchinovrp-social-network-7b28f6f8b546/dao/src/main/resources/persistence.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../Guys reps/Nemchinovrp-social-network-7b28f6f8b546/dao/src/test/java/com/getjavajob/training/web1610/dao/AccountDaoTest.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../Guys reps/PetSocNet/common/pom.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../Guys reps/PetSocNet/dao/pom.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../Guys reps/PetSocNet/pom.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../Guys reps/PetSocNet/service/pom.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../Guys reps/PetSocNet/webapp/pom.xml">
           <value>
             <set />
           </value>
@@ -63,12 +103,42 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../Guys reps/iceberg/src/com/company/Main.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../Guys reps/iceberg/src/com/company/Tractor.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../Guys reps/iceberg/src/com/company/TractorInDitchException.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../Guys reps/iceberg/src/com/company/Tractors.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../Guys reps/ksolopina-friendsapp-e3133a933f59/common/src/main/java/com/getjavajob/training/web1706/common/Account.java">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../Guys reps/ksolopina-friendsapp-e3133a933f59/dao/src/main/java/com/getjavajob/training/web1706/dao/AccountDao.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../Guys reps/ksolopina-friendsapp-e3133a933f59/dao/src/test/java/com/getjavajob/training/web1706/test/AccountDaoTest.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../Guys reps/ksolopina-friendsapp-e3133a933f59/dao/src/test/resources/db.properties">
           <value>
             <set />
           </value>
@@ -173,6 +243,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../folderVSC/socnet01/webapp/src/main/java/com.getjavajob.ui/EntryPointController.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../folderVSC/socnet01/webapp/webapp.iml">
           <value>
             <set />
@@ -239,6 +314,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/common/src/main/java/com/getjavajob/common/enums/Role.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/common/src/main/java/com/getjavajob/common/enums/Sex.java">
           <value>
             <set />
           </value>
@@ -449,6 +529,31 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/dao/src/main/resources/phoneSql.properties">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/dao/src/test/java/com/getjavajob/AccountDAOTest.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/dao/src/test/resources/dao-context-override.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/dao/src/test/resources/db.propertiesss">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/dao/src/test/resources/queriesCreate.sql">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/dao/src/test/resources/queriesDrop.sql">
           <value>
             <set />
           </value>
@@ -733,7 +838,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/webapp/src/old/EditController.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/webapp/src/old/ImageController.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/webapp/src/test/java/com/getjavajob/pastukhovm/service/AccountServiceTest.java">
           <value>
             <set />
           </value>

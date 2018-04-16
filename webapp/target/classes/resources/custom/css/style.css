@@ -1,0 +1,22 @@
+.contact-table {
+    width: 650px;
+    table-layout: fixed;
+}
+
+.shorty {
+    width: 60px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.medium {
+    width: 120px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.contact-type {
+    width: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+}

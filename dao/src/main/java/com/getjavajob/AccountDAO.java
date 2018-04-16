@@ -10,7 +10,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.*;
 
 @Repository(value = "accountDao")
 public class AccountDAO implements CrudDAO<Account> {
@@ -32,6 +33,7 @@ public class AccountDAO implements CrudDAO<Account> {
     }
 
     public Account getAccount(String field, Object o) throws DaoException {
+
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Account> criteriaQuery = builder.createQuery(Account.class);
         Root<Account> root = criteriaQuery.from(Account.class);

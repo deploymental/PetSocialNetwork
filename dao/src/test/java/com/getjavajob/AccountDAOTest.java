@@ -1,129 +1,144 @@
-/*@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:DAO-contest.xml"})*/
-/*
 package com.getjavajob;
 
 import com.getjavajob.common.Account;
 import com.getjavajob.common.enums.Sex;
+import com.getjavajob.exceptions.DaoException;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.sql.*;
-import java.util.Properties;
+import javax.sql.DataSource;
+import java.math.BigInteger;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-
+@Transactional
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:dao-context.xml", "classpath:dao-context-override.xml"})
 public class AccountDAOTest {
-    private static Account forTests;
-    private AccountDAO msd = new AccountDAO();
 
-    @BeforeClass
-    public static void accInitialise() {
-        forTests = new Account();
-        forTests.setId(1);
-        forTests.setName("Vasya");
-        forTests.setMiddleName("Vasylevich");
-        forTests.setSurName("Vasyacovich");
-        forTests.setSex(Sex.valueOf("MALE"));
-        forTests.setBirthDate(new Date(2134235));
-        forTests.setHomeAddress("moscow pushkina");
-        forTests.setWorkAddress("moscow colotushkina");
-        forTests.setEmail("loh@pidr.ua");
-        forTests.setIcq(666666666);
-        forTests.setSkype("lolir");
-        forTests.setAdditionalInfo("loliryu");
-    }
+    @Autowired
+    private DataSource dataSource;
+    @Autowired
+    private AccountDAO accountDao;
+    private Account account;
+    private List<Account> accounts;
+    private Account friend;
+    private List<Account> friends;
+    private ResourceDatabasePopulator databasePopulator;
 
     @Before
-    public void createDB() {
-        try {
-            Properties props = new Properties();
-            props.load(getClass().getClassLoader().getResourceAsStream("TestProperties"));
-            String url = props.getProperty("database.url");
-            String user = props.getProperty("database.user");
-            String password = props.getProperty("database.password");
-            Connection connection = DriverManager.getConnection(url, user, password);
-            try (Statement ps1 = connection.createStatement()) {
-                ps1.executeUpdate("DROP TABLE IF EXISTS ACCOUNTS;");
+    public void init() throws DaoException {
+        Resource createTables = new ClassPathResource("queriesCreate.sql");
+        databasePopulator = new ResourceDatabasePopulator(createTables);
+        databasePopulator.execute(dataSource);
 
-                ps1.executeUpdate("CREATE TABLE ACCOUNTS (\n" +
-                        "  `id` INT NOT NULL AUTO_INCREMENT,\n" +
-                        "  `name` VARCHAR(45) NOT NULL,\n" +
-                        "  `middleName` VARCHAR(45) NULL,\n" +
-                        "  `surName` VARCHAR(45) NOT NULL,\n" +
-                        "  `sex` VARCHAR(1) NOT NULL,\n" +
-                        "  `birthDate` DATE NOT NULL,\n" +
-                        "  `homeAddress` VARCHAR(45) NULL,\n" +
-                        "  `workAddress` VARCHAR(45) NULL,\n" +
-                        "  `email` VARCHAR(45) NOT NULL,\n" +
-                        "  `icq` INT NULL,\n" +
-                        "  `skype` VARCHAR(45) NULL,\n" +
-                        "  `additionalInfo` VARCHAR(45) NULL,\n" +
-                        "  PRIMARY KEY (`id`));");
-                connection.close();
-            }
-        } catch (SQLException | IOException e) {
-            e.printStackTrace();
+        account = new Account();
+        account.setId(1);
+        account.setName("Vasya");
+        account.setMiddleName("Vasylevich");
+        account.setSurName("Vasyacovich");
+        account.setSex(Sex.valueOf("MALE"));
+        account.setBirthDate(new Date(2134235));
+        account.setHomeAddress("moscow pushkina");
+        account.setWorkAddress("moscow colotushkina");
+        account.setEmail("loh@pidr.ua");
+        account.setIcq("666666666");
+        account.setSkype("lolir");
+        account.setAdditionalInfo("loliryu");
+        accounts = new ArrayList<>();
+        friends = new ArrayList<>();
+        friends.add(friend);
+        accountDao.create(account);
+        account.setEmail("loh@pidr.ru");
+        account.setId(2);
+        friend = account;
+        accountDao.create(friend);
+        accounts.add(account);
+        accounts.add(friend);
+    }
+
+    @After
+    public void terminate() throws SQLException {
+        Resource dropTables = new ClassPathResource("queriesDrop.sql");
+        databasePopulator.setScripts(dropTables);
+        databasePopulator.execute(dataSource);
+    }
+
+    @Test
+    public void getByIdTest() throws DaoException {
+        assertEquals(account, accountDao.read(1));
+    }
+
+    @Test
+    public void getAllTest() throws DaoException {
+        List<Account> accountsDao = accountDao.getAll();
+        int i = 0;
+        assertEquals(accounts.size(), accountsDao.size());
+        for (Account account : accounts) {
+            assertEquals(account, accountsDao.get(i));
+            i++;
         }
     }
 
     @Test
-    public void createAndReadAccTest() throws SQLException {
-        msd.create(forTests);
-        Account ac = msd.read(1);
-        assertEquals("", ac, forTests);
+    public void getByEmailTest() throws DaoException {
+        assertEquals(account, accountDao.read("ivanov@mail.ru"));
+    }
+
+    @Transactional
+    @Test
+    public void deleteTest() throws DaoException {
+        accountDao.delete(accountDao.read(account.getEmail()).getId());
+        assertNull(accountDao.read(account.getId()));
+    }
+
+    @Transactional
+    @Test
+    public void updateTest() throws DaoException {
+        account.setHomeAddress("New home address");
+        accountDao.update(account);
+        assertEquals(account, accountDao.read(1));
+    }
+
+    @Transactional
+    @Test
+    public void insertTest() throws ParseException, DaoException {
+        Account newAccount = new Account();
+        newAccount.setId(3);
+        newAccount.setName("Vasya");
+        newAccount.setMiddleName("Vasylevich");
+        newAccount.setSurName("Vasyacovich");
+        newAccount.setSex(Sex.valueOf("MALE"));
+        newAccount.setBirthDate(new Date(2134235));
+        newAccount.setHomeAddress("moscow pushkina");
+        newAccount.setWorkAddress("moscow colotushkina");
+        newAccount.setEmail("loh@pidr.com");
+        newAccount.setIcq("666666666");
+        newAccount.setSkype("lolir");
+        newAccount.setAdditionalInfo("loliryu");
+        newAccount = accountDao.read(accountDao.create(newAccount));
+        assertEquals(newAccount, accountDao.read(3));
     }
 
     @Test
-    public void updateAccTest() throws SQLException {
-        msd.create(forTests);
-        Account ac = msd.read(1);
-        ac.setSkype("pokemon");
-        msd.update(ac);
-        assertEquals("", ac, msd.read(1));
+    public void getAvatarById() throws DaoException {
+        byte[] array = new BigInteger("1111000011110001", 2).toByteArray();
+        account.setImage(array);
+        accountDao.update(account);
+        assertArrayEquals(account.getImage(), accountDao.read(account.getEmail()).getImage());
     }
-
-    @Test
-    public void deleteAccTest() throws SQLException {
-        msd.create(forTests);
-        msd.delete(1);
-        assertEquals("", msd.read(1), null);
-    }
-
-    @Test
-    public void getAllAccTest() throws SQLException {
-        msd.create(forTests);
-        assertEquals("", msd.getAll().get(0), forTests);
-    }
-    //public static void main(String[] args) throws SQLException {
-        */
-/*AccountDAO msd = new AccountDAO("TestProperties");
-        Account ac = new Account();
-        ac.setId(1);
-        ac.setName("Vasya");
-        ac.setMiddleName("Vasylevich");
-        ac.setSurName("Vasyacovich");
-        ac.setSex("M");
-        ac.setBirthDate(new Date(2134235));
-        ac.setHomeAddress("moscow pushkina");
-        ac.setWorkAddress("moscow colotushkina");
-        ac.setEmail("loh@pidr.ua");
-        ac.setIcq(666666666);
-        ac.setSkype("lolir");
-        ac.setAdditionalInfo("loliryu");
-
-        //msd.create(ac);
-        System.out.println(msd.read(1));
-        System.out.println(msd.getAll().size());
-        ac.setName("Lesha");
-        msd.update(ac);
-        System.out.println(msd.read(1));
-        msd.delete(1);
-        System.out.println(msd.getAll().size());*//*
-
 }
-
-*/

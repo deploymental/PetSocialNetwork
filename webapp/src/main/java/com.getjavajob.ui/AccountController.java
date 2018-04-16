@@ -3,6 +3,8 @@ package com.getjavajob.ui;
 import com.getjavajob.*;
 import com.getjavajob.common.Account;
 import com.getjavajob.common.Group;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,7 @@ import java.util.List;
 
 @Controller
 public class AccountController {
+    private static final Logger logger = LoggerFactory.getLogger(AccountController.class);
     AccountService accountService;
     PhoneService phoneService;
     FriendsRelationService relationService;
@@ -40,15 +43,14 @@ public class AccountController {
     @RequestMapping(value = "/account/{id}", method = RequestMethod.GET)
     public ModelAndView getAccountPage(@SessionAttribute("accountSession") Account accountSession,
                                        @PathVariable int id, HttpSession hs) throws SQLException {
-        //logger
-
+        logger.info("page accountId = " + id);
+        logger.info("account from session " + accountSession);
         if (accountSession == null || accountSession.getId() == 0) {
             return new ModelAndView("login");
         }
-
         ModelAndView mav = new ModelAndView("accountDetail");
         Account acc = accountService.getAccount(id);
-
+        logger.info("account from page " + acc);
         return mav.addObject("phones", phoneService.getAll(id)).
                 addObject("posts", messageService.getAllPostsFromAccountWall(accountService.getAccount(id))).
                 addObject("relation", relationService.getAccountRelation(acc, accountSession)).
@@ -58,50 +60,25 @@ public class AccountController {
 
     @RequestMapping(value = "/account/image/{id}", method = RequestMethod.GET)
     public void getAccountImage(@PathVariable int id, HttpServletResponse resp) throws IOException {
-        //logger
-
-        //relations check
+        logger.info("image for accountId = " + id);
         if (id > 0) {
             byte[] content = accountService.getAccount(id).getImage();
             resp.getOutputStream().write(content);
             resp.getOutputStream().flush();
             resp.getOutputStream().close();
+            logger.info("image was added to accountId" + id);
         } else {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            logger.info("image was not added to accountId" + id);
         }
-    }
-
-    @RequestMapping(value = "/account/friends", method = RequestMethod.GET)
-    public ModelAndView getFriends(@SessionAttribute("accountSession") Account accountSession,
-                           /*@PathVariable int id,*/ HttpServletResponse resp) throws IOException {
-        //logger
-        ModelAndView modelAndView = new ModelAndView("/friendsList");
-        //List<Account> friends = relationService.getFriends(accountSession);
-
-        List<Account> friends = new ArrayList<>();
-
-        //List<Account> followers = relationService.getFollowers(accountSession);
-        List<Account> followers = new ArrayList<>();
-
-        //List<Account> recipients = relationService.getRecipients(accountSession);
-        List<Account> recipients = new ArrayList<>();
-
-        return modelAndView.addObject("recipients", recipients).
-                addObject("accounts", friends).
-                addObject("followers", followers);
     }
 
     @RequestMapping(value = "/account/groups", method = RequestMethod.GET)
     public ModelAndView getGroups(@SessionAttribute("accountSession") Account accountSession) throws IOException {
-        //logger
+        logger.info("groups for account " + accountSession);
         ModelAndView modelAndView = new ModelAndView("/groupsList");
-
         List<Group> groups = groupsService.getAll();
-        System.out.println(groups.size());
-
-
-        //groups.add(groupsService.getGroups(accountSession));
-
+        logger.info("groups count " + groups.size());
         return modelAndView.addObject("groups", groups);
     }
 
@@ -116,7 +93,7 @@ public class AccountController {
 
     @RequestMapping(value = "/chat", method = RequestMethod.GET)
     public String redirectChat() {
-        //logger.debug("/chatting GET request");
+        logger.debug("/chatting GET request");
         return "chat";
     }
 

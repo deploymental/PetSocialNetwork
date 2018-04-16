@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Context path="">
+    <Resource name="jdbc/pgdb" auth="Container"
+              type="javax.sql.DataSource" driverClassName="org.postgresql.Driver"
+              url="jdbc:postgresql://localhost:5432/pgdb"
+              username="postgres" password="root"
+              maxActive="20" maxIdle="10" maxWait="-1" validationQuery="Select 1"/>
+</Context>
+
+        <!--
+        <Context path="">
+            <Resource name="jdbc/d6tjt0pn93rsee" auth="Container"
+                      type="javax.sql.DataSource" driverClassName="org.postgresql.Driver"
+                      url="jdbc:postgresql://ec2-54-217-214-201.eu-west-1.compute.amazonaws.com:5432/d6tjt0pn93rsee?sslmode=require"
+                      username="gcjiwufwdzzfef" password="11f64d8fc65c3ff0ae61ae82387f97fab81ddf252d0bee9f626a68b2479cf60e"
+                      maxActive="20" maxIdle="10" maxWait="-1" validationQuery="Select 1"/>
+        </Context>
+        -->
+

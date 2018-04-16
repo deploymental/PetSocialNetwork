@@ -1,5 +1,6 @@
 package com.getjavajob.common;
 
+
 import com.getjavajob.common.enums.AccountRelationStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -3,6 +3,8 @@ package com.getjavajob.ui;
 import com.getjavajob.AccountService;
 import com.getjavajob.FriendsRelationService;
 import com.getjavajob.common.Account;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class RelationController {
+    private static final Logger logger = LoggerFactory.getLogger(RelationController.class);
     @Autowired
     AccountService accountService;
     @Autowired
@@ -21,9 +24,7 @@ public class RelationController {
     public ModelAndView sendFriendRequest(@PathVariable int accId,
                                           @SessionAttribute("accountSession") Account accountSession) {
         relationService.sendRequestToFriend(accountSession, accountService.getAccount(accId));
-
-        //logger
-
+        logger.info("account " + accountSession.getId() + " requested account " + accId);
         return new ModelAndView("redirect:/account/" + accId);
     }
 
@@ -31,22 +32,16 @@ public class RelationController {
     public ModelAndView acceptFriendRequest(@PathVariable int accId,
                                             @SessionAttribute("accountSession") Account accountSession) {
         relationService.acceptFriend(accountSession, accountService.getAccount(accId));
-
-        //service.getAccountRelation(account.getId(), friend.getId());
-
-        //logger.info("account " + authAccount.getId() + " accepted account " + accId);
-
+        logger.info("account " + accountSession.getId() + " accepted account " + accId);
         return new ModelAndView("redirect:/account/" + accId);
     }
 
     @RequestMapping(value = "/deleteFriend/{accId}")
     public ModelAndView deleteFriend(@PathVariable("accId") int accId,
                                      @SessionAttribute("accountSession") Account accountSession) {
-        Account account = accountService.getAccount(accountSession.getEmail());
         Account friend = accountService.getAccount(accId);
         relationService.deleteRequest(accountSession, friend);
-        //logger.info("account " + authAccount.getId() + " deleted account " + accId);
-        //logger.info("account " + service.getAccountRelation(account.getId(), friend.getId()));
+        logger.info("account " + accountSession.getId() + " deleted account " + accId);
         return new ModelAndView("redirect:/account/" + accId);
     }
 

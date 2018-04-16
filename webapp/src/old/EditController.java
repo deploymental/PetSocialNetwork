@@ -18,8 +18,6 @@ public class EditController extends HttpServlet {
             RequestDispatcher rd = req.getRequestDispatcher("WEB-INF/jsp/edit/group/groupEditForm.jsp");
             rd.forward(req, resp);
         }
-
-
     }
 
     @Override

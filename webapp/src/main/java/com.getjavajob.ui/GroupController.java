@@ -4,6 +4,8 @@ import com.getjavajob.GroupsService;
 import com.getjavajob.WallPostService;
 import com.getjavajob.common.Account;
 import com.getjavajob.common.Group;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,7 @@ import static com.getjavajob.utils.GlueTogether.glueGroupsTogether;
 
 @Controller
 public class GroupController {
+    private static final Logger logger = LoggerFactory.getLogger(GroupController.class);
     GroupsService groupsService;
     WallPostService wallPostService;
 
@@ -32,8 +35,6 @@ public class GroupController {
 
     @RequestMapping(value = {"/groupRegistration"}, method = RequestMethod.GET)
     public ModelAndView registration() {
-        //logger
-
         return new ModelAndView("groupEditForm");
     }
 
@@ -44,15 +45,15 @@ public class GroupController {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         group.setImage(multipartRequest.getFile("imag").getBytes());
         group.setCreator(accountSession);
-
         int id = groupsService.create(group);
+        logger.info("successful registration  = " + id);
         return new ModelAndView("redirect:/group/" + id);
     }
 
     @RequestMapping(value = {"/groupModification/{id}"}, method = RequestMethod.GET)
     public ModelAndView modification(@SessionAttribute("accountSession") Account accountSession,
                                      @PathVariable int id) {
-        //logger
+        logger.info("update group = " + id);
         Group inBase = groupsService.getGroup(id);
         if (inBase.getCreator().equals(accountSession) || accountSession.getIsAdmin().equals(true)) {
             ModelAndView mav = new ModelAndView("groupEditForm");
@@ -73,6 +74,7 @@ public class GroupController {
         Group gr = groupsService.getGroup(id);
         glueGroupsTogether(gr, group);
         groupsService.update(gr);
+        logger.info("succesful group update" + id);
         return new ModelAndView("redirect:/group/" + id);
     }
 
@@ -80,39 +82,33 @@ public class GroupController {
     @RequestMapping(value = "/group/{id}", method = RequestMethod.GET)
     public ModelAndView getAccountPage(@SessionAttribute("accountSession") Account accountSession,
                                        @PathVariable int id) throws SQLException {
-        //logger
-
+        logger.info("page groupId = " + id);
+        logger.info("account from session " + accountSession);
         if (accountSession == null || accountSession.getId() == 0) {
             return new ModelAndView("login");
         }
-
         ModelAndView mav = new ModelAndView("groupDetail");
         Group group = groupsService.getGroup(id);
-
-        // Groups RElation AccountRelationStatus relation = relationService.getAccountRelation(id, accountSession.getId());
-
+        logger.info("group from page " + group);
         if (group.getImage() != null) {
             mav.addObject("image", group.getImage());
         }
-        System.out.println(wallPostService.getAllPostsFromGroupWall(groupsService.getGroup(id)).size());
-
         return mav.addObject("posts", wallPostService.getAllPostsFromGroupWall(groupsService.getGroup(id))).
-                addObject("group", group).  //relations
+                addObject("group", group).
                 addObject("accountSession", accountSession);
     }
 
     @RequestMapping(value = "/group/image/{id}", method = RequestMethod.GET)
     public void getGroupImage(@PathVariable int id, HttpServletResponse resp) throws IOException {
-        //logger
-
-        //relations check
         if (id > 0) {
             byte[] content = groupsService.getGroup(id).getImage();
             resp.getOutputStream().write(content);
             resp.getOutputStream().flush();
             resp.getOutputStream().close();
+            logger.info("image was added to groupId" + id);
         } else {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            logger.info("image was not added to groupId" + id);
         }
     }
 }

@@ -23,7 +23,7 @@ public class GlueTogether {
                     }
                 }
             }
-        }// TODO: 1/30/2018 в одном цикле 
+        }// TODO: почему не работает
     }
 
     public static void glueAccountsTogether(Account ac, Account update) {

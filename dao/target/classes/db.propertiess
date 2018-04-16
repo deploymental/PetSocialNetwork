@@ -1,0 +1,4 @@
+database.driver=org.postgresql.Driver
+database.url=jdbc:postgresql://ec2-54-217-214-201.eu-west-1.compute.amazonaws.com:5432/d6tjt0pn93rsee?sslmode=require
+database.user=gcjiwufwdzzfef
+database.password=11f64d8fc65c3ff0ae61ae82387f97fab81ddf252d0bee9f626a68b2479cf60e
